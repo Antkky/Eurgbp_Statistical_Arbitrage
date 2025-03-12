@@ -88,7 +88,7 @@ ipython_config.py
 
 # Data and test files
 data/*
-tests/*/Montecarlo.csv
+tests/*
 
 # Python version manager configurations
 # pyenv
