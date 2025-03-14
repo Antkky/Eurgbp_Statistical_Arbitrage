@@ -17,7 +17,7 @@
                 "viewState": {
                   "x": 1018.7738388066152,
                   "y": 113.78383384659008,
-                  "zoom": -0.6666666666666665
+                  "zoom": -1.6666666666666663
                 }
               },
               "icon": "lucide-layout-dashboard",
@@ -171,6 +171,7 @@
   },
   "active": "134171f3c3dbedb8",
   "lastOpenFiles": [
+    "requirements.txt",
     "ProcessFlow.canvas",
     "Untitled.md",
     "Welcome.md"
