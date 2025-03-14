@@ -4,17 +4,24 @@
     "type": "split",
     "children": [
       {
-        "id": "4de9740fab0211cf",
+        "id": "eb5c861b4c7b3d75",
         "type": "tabs",
         "children": [
           {
-            "id": "0b82ac2c253dcbbd",
+            "id": "134171f3c3dbedb8",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
-              "icon": "lucide-file",
-              "title": "New tab"
+              "type": "canvas",
+              "state": {
+                "file": "ProcessFlow.canvas",
+                "viewState": {
+                  "x": 1018.7738388066152,
+                  "y": 113.78383384659008,
+                  "zoom": -0.6666666666666665
+                }
+              },
+              "icon": "lucide-layout-dashboard",
+              "title": "ProcessFlow"
             }
           }
         ]
@@ -162,8 +169,10 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "a5cf2d82f374fd2f",
+  "active": "134171f3c3dbedb8",
   "lastOpenFiles": [
+    "ProcessFlow.canvas",
+    "Untitled.md",
     "Welcome.md"
   ]
 }
