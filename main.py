@@ -24,21 +24,17 @@ def test():
 def main():
     """Main function to handle training and testing."""
     args = get_arguments()
-    try:
-        dataA, dataB = process_test_data("./data/EURUSD.csv", "./data/GBPUSD.csv", debug=args.debug)
-        dataT = process_train_data(dataA, dataB)
+    #dataA, dataB = process_test_data("./data/EURUSD.csv", "./data/GBPUSD.csv", debug=args.debug)
+    #dataT = process_train_data(dataA, dataB)
 
-        if args.train:
-            print("Training mode")
-            train(dataT, debug=args.debug)  # Processed dataA is directly used
+    if args.train:
+        print("Training mode")
+        dataT = pd.read_csv("./data/processed/train_data.csv", index_col="Gmt time")
+        train(dataT, debug=args.debug)  # Processed dataA is directly used
 
-        if args.test:
-            print("Testing mode")
-            test()
-
-    except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
+    if args.test:
+        print("Testing mode")
+        test()
 
 if __name__ == "__main__":
     main()
