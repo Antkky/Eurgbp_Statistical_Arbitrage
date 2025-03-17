@@ -11,17 +11,14 @@
             "id": "134171f3c3dbedb8",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "ProcessFlow.canvas",
-                "viewState": {
-                  "x": 1018.7738388066152,
-                  "y": 113.78383384659008,
-                  "zoom": -1.6666666666666663
-                }
+                "file": "Trade Execution Neural Network.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "ProcessFlow"
+              "icon": "lucide-file",
+              "title": "Trade Execution Neural Network"
             }
           }
         ]
@@ -81,7 +78,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300
+    "width": 200
   },
   "right": {
     "id": "d6bb36f4942dfb23",
@@ -171,9 +168,34 @@
   },
   "active": "134171f3c3dbedb8",
   "lastOpenFiles": [
-    "requirements.txt",
+    "requirement.txt",
+    "models/Episode-1.pth",
+    "models/Episode-0.pth",
+    "models",
+    "venv/Lib/site-packages/mplfinance-0.12.10b0.dist-info/top_level.txt",
+    "venv/Lib/site-packages/mplfinance-0.12.10b0.dist-info/WHEEL",
+    "venv/Lib/site-packages/mplfinance-0.12.10b0.dist-info/REQUESTED",
+    "venv/Lib/site-packages/mplfinance-0.12.10b0.dist-info/RECORD",
+    "venv/Lib/site-packages/mplfinance-0.12.10b0.dist-info/METADATA",
+    "venv/Lib/site-packages/mplfinance-0.12.10b0.dist-info/LICENSE",
+    "venv/Lib/site-packages/mplfinance-0.12.10b0.dist-info/INSTALLER",
+    "venv/Lib/site-packages/sklearn/datasets/images/flower.jpg",
+    "venv/Lib/site-packages/sklearn/datasets/images/china.jpg",
+    "venv/Lib/site-packages/torchgen/packaged/autograd/README.md",
+    "venv/Lib/site-packages/matplotlib/mpl-data/sample_data/Minduka_Present_Blue_Pack.png",
+    "venv/Lib/site-packages/matplotlib/mpl-data/sample_data/logo2.png",
+    "venv/Lib/site-packages/matplotlib/mpl-data/sample_data/grace_hopper.jpg",
+    "venv/Lib/site-packages/matplotlib/mpl-data/images/zoom_to_rect.svg",
+    "venv/Lib/site-packages/matplotlib/mpl-data/images/zoom_to_rect.png",
+    "venv/Lib/site-packages/matplotlib/mpl-data/images/zoom_to_rect_large.png",
+    "venv/Lib/site-packages/matplotlib/mpl-data/images/subplots_large.png",
+    "venv/Lib/site-packages/matplotlib/mpl-data/images/zoom_to_rect-symbolic.svg",
+    "venv/Lib/site-packages/scipy/fft/_pocketfft/LICENSE.md",
+    "venv/Lib/site-packages/numpy/random/LICENSE.md",
+    "venv/Lib/site-packages/idna-3.10.dist-info/LICENSE.md",
+    "venv/Lib/site-packages/vectorbt-0.27.2.dist-info/LICENSE.md",
     "ProcessFlow.canvas",
-    "Untitled.md",
+    "Trade Execution Neural Network.md",
     "Welcome.md"
   ]
 }

@@ -15,7 +15,7 @@ class LSTM_Q_Net(nn.Module):
         self.lstm = nn.LSTM(
             input_size=input_size,
             hidden_size=hidden_size,
-            num_layers=5,
+            num_layers=3,
             batch_first=True,
             dropout=dropout,
             bidirectional=bidirectional,
@@ -25,7 +25,6 @@ class LSTM_Q_Net(nn.Module):
         self.fc1 = nn.Linear(hidden_size * 2 if bidirectional else hidden_size, 128)
         self.fc2 = nn.Linear(128, output_size)
 
-        # Xavier initialization for stability
         self._init_weights()
 
     def _init_weights(self):
@@ -35,12 +34,19 @@ class LSTM_Q_Net(nn.Module):
                 nn.init.zeros_(m.bias)
 
     def forward(self, x):
-        lstm_out, _ = self.lstm(x)
-        lstm_out = lstm_out[:, -1, :]
-        lstm_out = self.ln(lstm_out)
-        x = F.relu(self.fc1(lstm_out))
-        x = self.fc2(x)
-        return x
+      lstm_out, _ = self.lstm(x)
+
+      # If input is (batch_size, hidden_size), don't index for seq_len
+      if len(lstm_out.shape) == 3:
+        lstm_out = lstm_out[:, -1, :]  # Extract last timestep (only works for sequences)
+      else:
+        lstm_out = lstm_out  # No need to slice when seq_len is missing
+
+      lstm_out = self.ln(lstm_out)
+      x = F.relu(self.fc1(lstm_out))
+      x = self.fc2(x)
+      return x
+
 
     def save(self, file_name):
         model_folder_path = "./models"
@@ -50,54 +56,59 @@ class LSTM_Q_Net(nn.Module):
 
 
 class QTrainer:
-    def __init__(self, model, lr, gamma, batch_size, target_update_freq=10):
-        self.lr = lr
-        self.gamma = gamma
-        self.model = model.to(device)
-        self.target_model = LSTM_Q_Net(13, 64, 2).to(device)
-        self.update_target()
-        self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
-        self.scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size=10, gamma=0.5)
-        self.criterion = nn.MSELoss()
-        self.batch_size = batch_size
-        self.target_update_freq = target_update_freq
-        self.train_step_count = 9
+  def __init__(self, model, lr, gamma, batch_size, target_update_freq=10):
+    self.lr = lr
+    self.gamma = gamma
+    self.model = model.to(device)
 
-    def update_target(self):
-        self.target_model.load_state_dict(self.model.state_dict())
+    # Ensure target model matches the main model exactly
+    self.target_model = LSTM_Q_Net(
+      input_size=15,
+      hidden_size=model.hidden_size,
+      output_size=model.fc2.out_features,
+      bidirectional=model.bidirectional
+    ).to(device)
 
-    def train_step(self, state, action, reward, next_state, done):
-        state = state.to(device)
-        next_state = next_state.to(device)
-        action = action.to(device)
-        reward = reward.to(device)
-        done = done.to(device)
+    self.update_target()  # Copy weights instead of reinitializing
 
-        if state.dim() == 2:
-            state = state.view(-1, 30, 13)
-        if next_state.dim() == 2:
-            next_state = next_state.view(-1, 30, 13)
+    self.optimizer = optim.Adam(model.parameters(), lr=self.lr)
+    self.scheduler = optim.lr_scheduler.StepLR(self.optimizer, step_size=10, gamma=0.5)
+    self.criterion = nn.MSELoss()
+    self.batch_size = batch_size
+    self.target_update_freq = target_update_freq
+    self.train_step_count = 9
 
-        pred = self.model(state)
-        target = pred.clone().detach()
+  def update_target(self):
+    """Copy model weights to the target network"""
+    self.target_model.load_state_dict(self.model.state_dict())  # ✅ Fixed
 
-        with torch.no_grad():
-            Q_next = self.target_model(next_state).max(dim=1)[0]  # Get max Q-value for next state
+  def train_step(self, state, action, reward, next_state, done):
+    state = state.to(device)
+    next_state = next_state.to(device)
+    action = action.to(device).view(-1, 1)  # Ensure proper shape for indexing
+    reward = reward.to(device)
+    done = done.to(device)
 
-        # Compute target Q-values
-        target[range(self.batch_size), action] = reward + (1 - done.float()) * self.gamma * Q_next
+    pred = self.model(state)
+    target = pred.clone().detach()
 
-        # Compute loss and optimize
-        self.optimizer.zero_grad()
-        loss = self.criterion(pred, target)
-        loss.backward()
-        torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)  # Gradient clipping
-        self.optimizer.step()
+    with torch.no_grad():
+      Q_next = self.target_model(next_state).max(dim=1)[0]  # Max Q-value for next state
 
-        # Update target network every `target_update_freq` steps
-        self.train_step_count += 1
-        if self.train_step_count % self.target_update_freq == 0:
-            self.update_target()
+    # Compute target Q-values
+    target.scatter_(1, action, reward + (1 - done.float()) * self.gamma * Q_next.unsqueeze(1))
 
-        # Adjust learning rate
-        self.scheduler.step()
+    # Compute loss and optimize
+    self.optimizer.zero_grad()
+    loss = self.criterion(pred, target)
+    loss.backward()
+    torch.nn.utils.clip_grad_norm_(self.model.parameters(), max_norm=1.0)  # Gradient clipping
+    self.optimizer.step()
+
+    # Update target network every `target_update_freq` steps
+    self.train_step_count += 1
+    if self.train_step_count % self.target_update_freq == 0:
+      self.update_target()
+
+    # Adjust learning rate
+    self.scheduler.step()

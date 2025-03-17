@@ -5,19 +5,29 @@
 		{"id":"86ca0f2d8f4eb4aa","type":"text","text":"### Initialize Objects\n- Environment\n- AI Agent","x":280,"y":-110,"width":250,"height":140,"color":"6"},
 		{"id":"d22f26620c0421f5","type":"text","text":"### Run Command\n- Mode\n- Datapaths\n- Start/End Dates\n- Parameters","x":-620,"y":-130,"width":250,"height":180,"color":"4"},
 		{"id":"21258f4a88ee5180","type":"text","text":"### Set Parameters\n- Data\n- Strategy\n- Start/End Dates","x":580,"y":-115,"width":250,"height":150,"color":"6"},
-		{"id":"7900a1b4c28a5414","x":880,"y":-70,"width":250,"height":60,"color":"4","type":"text","text":"### Run Backtest"},
-		{"id":"3f6634a51b9341dd","type":"text","text":"### Trade Log Analysis","x":1180,"y":-70,"width":250,"height":60,"color":"5"},
-		{"id":"87d471e1c389f4ef","type":"text","text":"### Output.html","x":1485,"y":-70,"width":250,"height":60,"color":"2"},
-		{"id":"0bff3dcca634aa3b","x":880,"y":120,"width":250,"height":60,"type":"text","text":""}
+		{"id":"eff4110cdc094445","type":"text","text":"### Modes\n- Train\n- Test\n","x":-445,"y":80,"width":250,"height":140},
+		{"id":"fae071cbe6838be8","type":"text","text":"### Datapaths\n\n- Asset1 Datapath\n- Asset2 Datapath","x":-445,"y":240,"width":250,"height":140},
+		{"id":"03052943b65208e0","type":"text","text":"### Start/End Dates\n\n- Start Date\n- End Date","x":-445,"y":400,"width":250,"height":140},
+		{"id":"12a618f003e87345","type":"text","text":"Calculate Asset Ratio from processed data","x":-20,"y":80,"width":250,"height":73},
+		{"id":"aed085caf741adcd","type":"text","text":"### Train the AI","x":880,"y":-65,"width":250,"height":50,"color":"4"},
+		{"id":"7900a1b4c28a5414","type":"text","text":"### Run Backtest","x":1180,"y":-70,"width":250,"height":60,"color":"4"},
+		{"id":"0bff3dcca634aa3b","type":"text","text":"","x":1180,"y":120,"width":250,"height":60},
+		{"id":"3f6634a51b9341dd","type":"text","text":"### Trade Log Analysis","x":1480,"y":-70,"width":250,"height":60,"color":"5"},
+		{"id":"87d471e1c389f4ef","type":"text","text":"### Output.html","x":1785,"y":-70,"width":250,"height":60,"color":"2"}
 	],
 	"edges":[
 		{"id":"08e130dbda24ca6f","fromNode":"d22f26620c0421f5","fromSide":"right","toNode":"7ba1b66c97f57dd5","toSide":"left"},
 		{"id":"70b7b496cce22f84","fromNode":"7ba1b66c97f57dd5","fromSide":"right","toNode":"a0354b1664a67aaf","toSide":"left"},
 		{"id":"f053cc142597f5d9","fromNode":"a0354b1664a67aaf","fromSide":"right","toNode":"86ca0f2d8f4eb4aa","toSide":"left"},
 		{"id":"c1e32fb02631686b","fromNode":"86ca0f2d8f4eb4aa","fromSide":"right","toNode":"21258f4a88ee5180","toSide":"left"},
-		{"id":"32d803a362aca16a","fromNode":"21258f4a88ee5180","fromSide":"right","toNode":"7900a1b4c28a5414","toSide":"left"},
+		{"id":"32d803a362aca16a","fromNode":"aed085caf741adcd","fromSide":"right","toNode":"7900a1b4c28a5414","toSide":"left"},
 		{"id":"f965b7cfa120e723","fromNode":"3f6634a51b9341dd","fromSide":"right","toNode":"87d471e1c389f4ef","toSide":"left"},
 		{"id":"6e2622b5dc54a5a7","fromNode":"7900a1b4c28a5414","fromSide":"right","toNode":"3f6634a51b9341dd","toSide":"left"},
-		{"id":"ef4f56e0013d93f8","fromNode":"7900a1b4c28a5414","fromSide":"bottom","toNode":"0bff3dcca634aa3b","toSide":"top"}
+		{"id":"ef4f56e0013d93f8","fromNode":"7900a1b4c28a5414","fromSide":"bottom","toNode":"0bff3dcca634aa3b","toSide":"top"},
+		{"id":"0c8b08cd593fa887","fromNode":"d22f26620c0421f5","fromSide":"bottom","toNode":"eff4110cdc094445","toSide":"left"},
+		{"id":"b38e03a5386247a9","fromNode":"d22f26620c0421f5","fromSide":"bottom","toNode":"fae071cbe6838be8","toSide":"left"},
+		{"id":"421e0a19fd7bfdd4","fromNode":"d22f26620c0421f5","fromSide":"bottom","toNode":"03052943b65208e0","toSide":"left"},
+		{"id":"5b2ef3625546c265","fromNode":"a0354b1664a67aaf","fromSide":"bottom","toNode":"12a618f003e87345","toSide":"top"},
+		{"id":"e34efd703c6bba3e","fromNode":"21258f4a88ee5180","fromSide":"right","toNode":"aed085caf741adcd","toSide":"left"}
 	]
 }

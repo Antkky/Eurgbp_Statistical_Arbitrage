@@ -1,0 +1,11 @@
+{
+  "version": "0.0.0",
+  "dates": {
+    "start": "2019-01-02",
+    "end": "2025-01-01"
+  },
+  "assets": {
+    "pair1": "EURUSD",
+    "pair2": "GBPUSD"
+  }
+}
