@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from enum import Enum
 from typing import Tuple, List, Optional
+from src.logger import log
 
 class Action(Enum):
   HOLD = 0
@@ -72,6 +73,7 @@ class TradingEnvironment:
     return self.current_observation()
 
   def step_forward(self, action: Action) -> Tuple[pd.Series, float, float, float, bool]:
+    log(f"Stepping forward 1 step", "environment.py", "step_forward()")
     self.step += 1
     self.last_trade_step += 1
     reward, profit, positioned = self.execute_trade(action)
@@ -83,6 +85,7 @@ class TradingEnvironment:
     return obs, reward, self.realized_pnl, self.unrealized_pnl, done
 
   def execute_trade(self, action: Action) -> Tuple[float, float, int]:
+    log(f"Attempting to execute action", "environment.py", "execute_trade()")
     asset1_price = self.data.iloc[self.step]["Asset1_Price"]
     asset2_price = self.data.iloc[self.step]["Asset2_Price"]
     hedge_ratio = self.hedge_ratio.iloc[self.step]
