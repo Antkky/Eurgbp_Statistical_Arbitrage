@@ -31,8 +31,8 @@ class Position:
 class TradingEnvironment:
   REQUIRED_FEATURES = [
     "Asset1_Price", "Asset2_Price", "Ratio_Price", "Spread_ZScore", "Rolling_Correlation",
-    "Rolling_Cointegration_Score", "Asset1_RSI", "Asset2_RSI", "Ratio_RSI",
-    "Asset1_MACD", "Asset2_MACD", "Ratio_MACD"
+    "Rolling_Cointegration_Score", "RSI1", "RSI2", "RSI3",
+    "MACD1", "MACD2", "MACD3"
   ]
 
   PERFORMANCE_COLUMNS = ["Unrealized_PnL", "Realized_PnL", "Positioned"]
@@ -73,7 +73,6 @@ class TradingEnvironment:
     return self.current_observation()
 
   def step_forward(self, action: Action) -> Tuple[pd.Series, float, float, float, bool]:
-    log(f"Stepping forward 1 step", "environment.py", "step_forward()")
     self.step += 1
     self.last_trade_step += 1
     reward, profit, positioned = self.execute_trade(action)
@@ -84,8 +83,10 @@ class TradingEnvironment:
     obs.update({"Unrealized_PnL": self.unrealized_pnl, "Realized_PnL": self.realized_pnl, "Positioned": positioned})
     return obs, reward, self.realized_pnl, self.unrealized_pnl, done
 
+  def calculate_reward(pnl: float):
+    pass
+
   def execute_trade(self, action: Action) -> Tuple[float, float, int]:
-    log(f"Attempting to execute action", "environment.py", "execute_trade()")
     asset1_price = self.data.iloc[self.step]["Asset1_Price"]
     asset2_price = self.data.iloc[self.step]["Asset2_Price"]
     hedge_ratio = self.hedge_ratio.iloc[self.step]
@@ -106,7 +107,8 @@ class TradingEnvironment:
       self.realized_pnl += pnl
       self.unrealized_pnl = 0
       self.positions.clear()
-      profit = reward = pnl
+      profit = pnl
+      reward = self.calculate_reward(pnl)
     return reward, profit, int(bool(self.positions))
 
   def update_unrealized_pnl(self, asset1_price: float, asset2_price: float):

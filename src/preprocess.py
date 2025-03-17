@@ -4,7 +4,8 @@ from pathlib import Path
 import statsmodels.api as sm
 from ta.momentum import RSIIndicator
 from ta.trend import MACD
-import warnings
+from sklearn.linear_model import HuberRegressor, LinearRegression
+from sklearn.preprocessing import StandardScaler
 from tqdm import tqdm
 from numba import jit, prange
 
@@ -178,31 +179,116 @@ def rolling_cointegration_score(asset1, asset2, window=60, eps=1e-10):
 
     return scores
 
+def calculate_log_returns(prices):
+    return np.log(prices).diff()
+
+@jit(nopython=True)
+def calculate_rolling_hedge_ratio_numba(asset1_prices, asset2_prices, window_size=30):
+    """
+    Calculate rolling hedge ratio using OLS regression for pairs trading.
+
+    Parameters:
+    asset1_prices (array): Prices of the first asset
+    asset2_prices (array): Prices of the second asset
+    window_size (int): Size of the rolling window
+
+    Returns:
+    numpy array: Rolling hedge ratio between the two assets
+    """
+    n = len(asset1_prices)
+    hedge_ratios = np.zeros(n)
+
+    # Fill with NaN for the first window_size-1 elements
+    hedge_ratios[:window_size-1] = np.nan
+
+    for i in range(window_size-1, n):
+        # Get the window of data
+        y = asset1_prices[i-window_size+1:i+1]
+        x = asset2_prices[i-window_size+1:i+1]
+
+        # Calculate means
+        x_mean = np.mean(x)
+        y_mean = np.mean(y)
+
+        # Calculate the numerator and denominator for the hedge ratio
+        numerator = 0.0
+        denominator = 0.0
+
+        for j in range(window_size):
+            x_diff = x[j] - x_mean
+            y_diff = y[j] - y_mean
+            numerator += x_diff * y_diff
+            denominator += x_diff * x_diff
+
+        # Calculate hedge ratio (beta)
+        if denominator != 0:
+            hedge_ratios[i] = numerator / denominator
+        else:
+            hedge_ratios[i] = np.nan
+
+    return hedge_ratios
+
+def calculate_rolling_hedge_ratio(asset1_prices: pd.Series, asset2_prices: pd.Series, window_size=30):
+    """
+    Wrapper function that converts pandas Series to numpy arrays,
+    calls the Numba-optimized function, and returns the result as a pandas Series.
+
+    Parameters:
+    asset1_prices (pd.Series): Prices of the first asset
+    asset2_prices (pd.Series): Prices of the second asset
+    window_size (int): Size of the rolling window
+
+    Returns:
+    pd.Series: Rolling hedge ratio between the two assets
+    """
+    # Convert pandas Series to numpy arrays for Numba
+    asset1_arr = asset1_prices.to_numpy()
+    asset2_arr = asset2_prices.to_numpy()
+
+    # Calculate hedge ratios using Numba function
+    hedge_ratios = calculate_rolling_hedge_ratio_numba(asset1_arr, asset2_arr, window_size)
+
+    # Convert back to pandas Series with the same index as input
+    return pd.Series(hedge_ratios, index=asset1_prices.index)
+
+
 def process_train_data(asset1: pd.DataFrame, asset2: pd.DataFrame, debug: bool = False) -> pd.DataFrame:
     """Computes training features from asset data."""
     if debug:
         print("Processing data for Neural Network training.")
+
+    # Create a fresh DataFrame
     df = pd.DataFrame(index=asset1.index)
-    df["Asset1_Close"], df["Asset2_Close"] = asset1["Close"], asset2["Close"]
 
-    spread = df["Asset1_Close"] - df["Asset2_Close"]
+    # Add price data
+    df["Asset1_Price"] = asset1["Close"]
+    df["Asset2_Price"] = asset2["Close"]
+    df["Ratio_Price"] = df["Asset1_Price"] / df["Asset2_Price"]
 
-    df["Rolling Spread-ZScore"] = (spread - spread.rolling(30).mean()) / spread.rolling(30).std()
-    df["Rolling Correlation"] = df["Asset1_Close"].rolling(30).corr(df["Asset2_Close"])
+    df["Hedge_Ratio"] = calculate_rolling_hedge_ratio(df["Asset1_Price"], df["Asset2_Price"])
+
+    spread = df["Asset1_Price"] - df["Asset2_Price"]
+    df["Spread_ZScore"] = (spread - spread.rolling(30).mean()) / spread.rolling(30).std()
+    df["Rolling_Correlation"] = df["Asset1_Price"].rolling(30).corr(df["Asset2_Price"])
 
     # Run cointegration score calculation
     coint_scores = rolling_cointegration_score(
-        df["Asset1_Close"].values,
-        df["Asset2_Close"].values
+        df["Asset1_Price"].values,
+        df["Asset2_Price"].values
     )
-    df["Rolling Cointegration Score"] = coint_scores
+    df["Rolling_Cointegration_Score"] = coint_scores
 
     # Add technical indicators
-    df["RSI1"] = RSIIndicator(df["Asset1_Close"], window=14).rsi()
-    df["RSI2"] = RSIIndicator(df["Asset2_Close"], window=14).rsi()
-    df["MACD1"] = MACD(df["Asset1_Close"], window_slow=26, window_fast=12, window_sign=9).macd()
-    df["MACD2"] = MACD(df["Asset2_Close"], window_slow=26, window_fast=12, window_sign=9).macd()
+    df["RSI1"] = RSIIndicator(df["Asset1_Price"], window=14).rsi()
+    df["RSI2"] = RSIIndicator(df["Asset2_Price"], window=14).rsi()
+    df["RSI3"] = RSIIndicator(df["Ratio_Price"], window=14).rsi()
+    df["MACD1"] = MACD(df["Asset1_Price"], window_slow=26, window_fast=12, window_sign=9).macd()
+    df["MACD2"] = MACD(df["Asset2_Price"], window_slow=26, window_fast=12, window_sign=9).macd()
+    df["MACD3"] = MACD(df["Ratio_Price"], window_slow=26, window_fast=12, window_sign=9).macd()
 
+    # Drop NaN values only after all calculations are done
     df.dropna(inplace=True)
+
+    # Save the processed data
     df.to_csv("./data/processed/train_data.csv")
     return df

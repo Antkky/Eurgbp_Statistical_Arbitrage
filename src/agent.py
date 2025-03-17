@@ -1,17 +1,18 @@
 import pandas as pd
 import numpy as np
 import torch
+from tqdm import tqdm
 from collections import deque
 from typing import Tuple
 from src.model import LSTM_Q_Net, QTrainer
 from src.environment import TradingEnvironment, Action
 
 # Hyperparameters
-MAX_MEMORY = 100_000
-BATCH_SIZE = 64
-LEARNING_RATE = 0.25
+MAX_MEMORY = 150_000
+BATCH_SIZE = 128
+LEARNING_RATE = 0.5
 GAMMA = 0.95
-EPSILON_DECAY = 0.99
+EPSILON_DECAY = 0.98
 MIN_EPSILON = 0.01
 
 # Device Configuration
@@ -35,6 +36,7 @@ class TradingAgent:
     self.model = LSTM_Q_Net(input_size=15, hidden_size=128, output_size=4).to(device)
     self.trainer = QTrainer(self.model, lr=LEARNING_RATE, gamma=GAMMA, batch_size=BATCH_SIZE)
     self.env = TradingEnvironment(data, plot, debug)
+    self.datalength = len(data)
     self.equity_curves = {}
 
   def store_experience(self, state, action, reward, next_state, done):
@@ -94,21 +96,19 @@ class TradingAgent:
 
     :param episodes: Number of episodes to train the agent
     """
-    for episode in range(episodes):
-      state, done, total_reward = self.env.reset(), False, 0
-      equity_curve = []
-
-      while not done:
-        action, action_idx = self.select_action(state)
-        state, reward, real_profit, _, done = self.env.step_forward(action)
-        equity_curve.append(real_profit)
-        self.store_experience(state.values, action_idx, reward, state.values, done)
-        self.train()
-        total_reward += reward
-
-      self.equity_curves[episode] = equity_curve
-      self.update_epsilon()
-      self.save_model(episode)
+    for episode in tqdm(range(episodes), desc="Training Progress"):
+        state, done, total_reward = self.env.reset(), False, 0
+        equity_curve = []
+        for step in tqdm(range(self.datalength), desc=f"Episode {episode+1}", leave=False):
+            action, action_idx = self.select_action(state)
+            state, reward, real_profit, _, done = self.env.step_forward(action)
+            equity_curve.append(real_profit)
+            self.store_experience(state.values, action_idx, reward, state.values, done)
+            self.train()
+            total_reward += reward
+        self.equity_curves[episode] = equity_curve
+        self.update_epsilon()
+        self.save_model(episode)
 
 if __name__ == "__main__":
   # Generate test data
