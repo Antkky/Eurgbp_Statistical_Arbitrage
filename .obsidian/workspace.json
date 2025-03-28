@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Trade Execution Neural Network.md",
+                "file": "Untitled.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Trade Execution Neural Network"
+              "title": "Untitled"
             }
           }
         ]
@@ -168,6 +168,8 @@
   },
   "active": "134171f3c3dbedb8",
   "lastOpenFiles": [
+    "Trade Execution Neural Network.md",
+    "Untitled.md",
     "requirement.txt",
     "models/Episode-1.pth",
     "models/Episode-0.pth",
@@ -178,7 +180,6 @@
     "venv/Lib/site-packages/mplfinance-0.12.10b0.dist-info/RECORD",
     "venv/Lib/site-packages/mplfinance-0.12.10b0.dist-info/METADATA",
     "venv/Lib/site-packages/mplfinance-0.12.10b0.dist-info/LICENSE",
-    "venv/Lib/site-packages/mplfinance-0.12.10b0.dist-info/INSTALLER",
     "venv/Lib/site-packages/sklearn/datasets/images/flower.jpg",
     "venv/Lib/site-packages/sklearn/datasets/images/china.jpg",
     "venv/Lib/site-packages/torchgen/packaged/autograd/README.md",
@@ -195,7 +196,6 @@
     "venv/Lib/site-packages/idna-3.10.dist-info/LICENSE.md",
     "venv/Lib/site-packages/vectorbt-0.27.2.dist-info/LICENSE.md",
     "ProcessFlow.canvas",
-    "Trade Execution Neural Network.md",
     "Welcome.md"
   ]
 }

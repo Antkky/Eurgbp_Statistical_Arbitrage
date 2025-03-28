@@ -24,8 +24,8 @@ def test():
 def main():
     """Main function to handle training and testing."""
     args = get_arguments()
-    #dataA, dataB = process_test_data("./data/EURUSD.csv", "./data/GBPUSD.csv", debug=args.debug)
-    #dataT = process_train_data(dataA, dataB)
+    dataA, dataB = process_test_data("./data/EURUSD.csv", "./data/GBPUSD.csv", debug=args.debug)
+    dataT = process_train_data(dataA, dataB)
 
     if args.train:
         print("Training mode")
