@@ -11,14 +11,17 @@
             "id": "134171f3c3dbedb8",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "canvas",
               "state": {
-                "file": "Untitled.md",
-                "mode": "source",
-                "source": false
+                "file": "ProcessFlow.canvas",
+                "viewState": {
+                  "x": 707.5,
+                  "y": 205,
+                  "zoom": -0.8011932357420996
+                }
               },
-              "icon": "lucide-file",
-              "title": "Untitled"
+              "icon": "lucide-layout-dashboard",
+              "title": "ProcessFlow"
             }
           }
         ]
