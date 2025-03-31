@@ -251,7 +251,6 @@ def calculate_rolling_hedge_ratio(asset1_prices: pd.Series, asset2_prices: pd.Se
     # Convert back to pandas Series with the same index as input
     return pd.Series(hedge_ratios, index=asset1_prices.index)
 
-
 def process_train_data(asset1: pd.DataFrame, asset2: pd.DataFrame, debug: bool = False) -> pd.DataFrame:
     """Computes training features from asset data."""
     if debug:
